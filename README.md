@@ -1,7 +1,7 @@
 # publiccode.yml RESTful validator API
 
 A RESTful API for validating [publiccode.yml](https://github.com/italia/publiccode.yml)
-files, using the [publiccode-parser-go](https://github.com/italia/publiccode-parser-go)
+files, using the [libpubliccode](https://github.com/publiccodeyml/libpubliccode)
 library.
 
 ## API reference
