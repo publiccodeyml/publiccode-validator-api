@@ -33,5 +33,5 @@ changelog:
 dockers:
   - dockerfile: Dockerfile.goreleaser
     image_templates:
-      - "ghcr.io/italia/publiccode-validator-api:{{ .Tag }}"
-      - "ghcr.io/italia/publiccode-validator-api:latest"
+      - "ghcr.io/publiccodeyml/publiccode-validator-api:{{ .Tag }}"
+      - "ghcr.io/publiccodeyml/publiccode-validator-api:latest"
