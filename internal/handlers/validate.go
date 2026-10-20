@@ -5,8 +5,8 @@ import (
 	"errors"
 
 	"github.com/gofiber/fiber/v3"
-	publiccodeParser "github.com/italia/publiccode-parser-go/v5"
 	"github.com/italia/publiccode-validator-api/internal/common"
+	publiccodeParser "github.com/publiccodeyml/libpubliccode/v5"
 )
 
 type PubliccodeymlValidatorHandler struct {
