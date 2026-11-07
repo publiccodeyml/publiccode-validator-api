@@ -187,6 +187,42 @@ func TestValidateEndpoint(t *testing.T) {
 			},
 		},
 		{
+			description:         "validate with POST: empty body",
+			query:               "POST /v1/validate",
+			body:                "",
+			expectedCode:        400,
+			expectedBody:        `{"title":"empty body","detail":"need a body to validate","status":400}`,
+			expectedContentType: "application/problem+json",
+		},
+		{
+			description:         "validate with POST: valid file",
+			query:               "POST /v1/validate",
+			body:                validYml,
+			expectedCode:        200,
+			expectedContentType: "application/json; charset=utf-8",
+			validateFunc: func(t *testing.T, response map[string]any) {
+				assert.Equal(t, true, response["valid"])
+				results, ok := response["results"].([]any)
+				assert.True(t, ok)
+				assert.Len(t, results, 0)
+				assert.NotNil(t, response["normalized"])
+			},
+		},
+		{
+			description:         "validate with POST: invalid file",
+			query:               "POST /v1/validate",
+			body:                invalidYml,
+			expectedCode:        200,
+			expectedContentType: "application/json; charset=utf-8",
+			validateFunc: func(t *testing.T, response map[string]any) {
+				assert.Equal(t, false, response["valid"])
+				results, ok := response["results"].([]any)
+				assert.True(t, ok)
+				assert.NotEmpty(t, results)
+				assert.Nil(t, response["normalized"])
+			},
+		},
+		{
 			description:         "validate: empty body",
 			query:               "QUERY /v1/validate",
 			body:                "",
