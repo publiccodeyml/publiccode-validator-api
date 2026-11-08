@@ -17,10 +17,15 @@ func Error(status int, title string, detail string) ProblemJSONError {
 func CustomErrorHandler(ctx fiber.Ctx, err error) error {
 	var problemJSON *ProblemJSONError
 
-	// Retrieve the custom status code if it's a fiber.*Error
-	var e *fiber.Error
-	if errors.Is(err, e) {
-		problemJSON = &ProblemJSONError{Status: e.Code, Title: e.Message}
+	// Retrieve the custom status code if it's a fiber.Error.
+	fiberError, ok := errors.AsType[*fiber.Error](err)
+	if ok {
+		problemJSON = &ProblemJSONError{
+			Code:   "",
+			Title:  fiberError.Message,
+			Detail: "",
+			Status: fiberError.Code,
+		}
 	}
 
 	if problemJSON == nil {
