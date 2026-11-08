@@ -193,7 +193,9 @@ func TestStatusEndpoints(t *testing.T) {
 			expectedCode:        200,
 			expectedBody:        `{"v":"dev","commit":"-"}`,
 			expectedContentType: "application/json; charset=utf-8",
-			// TODO: test cache headers
+			expectedHeaders: map[string]string{
+				"Cache-Control": "no-cache",
+			},
 		},
 	}
 
