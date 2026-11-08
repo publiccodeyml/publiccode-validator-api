@@ -30,6 +30,7 @@ type TestCase struct {
 	expectedCode        int
 	expectedBody        string
 	expectedContentType string
+	expectedHeaders     map[string]string
 	validateFunc        func(t *testing.T, response map[string]any)
 }
 
@@ -107,6 +108,9 @@ func runTestCases(t *testing.T, tests []TestCase) {
 			}
 
 			assert.Equal(t, test.expectedContentType, res.Header.Get("Content-Type"))
+			for name, expectedValue := range test.expectedHeaders {
+				assert.Equal(t, expectedValue, res.Header.Get(name))
+			}
 		})
 	}
 }
@@ -118,7 +122,7 @@ func TestApi(t *testing.T) {
 			query:       "GET /v1/i-dont-exist",
 
 			expectedCode:        404,
-			expectedBody:        `{"title":"Not Found","detail":"Not Found","status":404}`,
+			expectedBody:        `{"title":"Not Found","status":404}`,
 			expectedContentType: "application/problem+json",
 		},
 	}
@@ -131,6 +135,16 @@ func TestValidateEndpoint(t *testing.T) {
 	invalidYml := loadTestdata(t, "invalid.publiccode.yml")
 
 	tests := []TestCase{
+		{
+			description:         "validate: unsupported method",
+			query:               "GET /v1/validate",
+			expectedCode:        405,
+			expectedBody:        `{"title":"Method Not Allowed","status":405}`,
+			expectedContentType: "application/problem+json",
+			expectedHeaders: map[string]string{
+				"Allow": "POST, QUERY",
+			},
+		},
 		{
 			description:         "validate: empty body",
 			query:               "QUERY /v1/validate",

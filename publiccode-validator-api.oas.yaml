@@ -105,6 +105,21 @@ paths:
                 title: empty body
                 detail: need a body to validate
                 status: 400
+        "405":
+          description: Method not allowed
+          headers:
+            Allow:
+              description: Supported HTTP methods for this endpoint
+              schema:
+                type: string
+              example: POST, QUERY
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemJSON"
+              example:
+                title: Method Not Allowed
+                status: 405
         "404":
           description: Not found
           content:
@@ -113,7 +128,6 @@ paths:
                 $ref: "#/components/schemas/ProblemJSON"
               example:
                 title: Not Found
-                detail: Not Found
                 status: 404
 
 components:
