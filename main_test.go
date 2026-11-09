@@ -201,3 +201,26 @@ func TestStatusEndpoints(t *testing.T) {
 
 	runTestCases(t, tests)
 }
+
+func TestStatusEndpointBuildMetadata(t *testing.T) {
+	version, commit := Version, Commit
+	t.Cleanup(func() {
+		Version = version
+		Commit = commit
+	})
+
+	Version = "1.2.3"
+	Commit = "abc1234"
+	app := Setup()
+
+	req, err := http.NewRequest(http.MethodGet, "/v1/status", nil)
+	assert.NoError(t, err)
+
+	res, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, res.StatusCode)
+
+	body, err := io.ReadAll(res.Body)
+	assert.NoError(t, err)
+	assert.Equal(t, `{"v":"1.2.3","commit":"abc1234"}`, string(body))
+}
