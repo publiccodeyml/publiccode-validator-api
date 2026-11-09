@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"os"
 	"strings"
@@ -133,6 +134,14 @@ func TestApi(t *testing.T) {
 func TestValidateEndpoint(t *testing.T) {
 	validYml := loadTestdata(t, "valid.publiccode.yml")
 	invalidYml := loadTestdata(t, "invalid.publiccode.yml")
+	externalChecksServer := httptest.NewServer(http.NotFoundHandler())
+	t.Cleanup(externalChecksServer.Close)
+	externalChecksYml := strings.Replace(
+		validYml,
+		"https://github.com/italia/developers.italia.it.git",
+		externalChecksServer.URL+"/repository.git",
+		1,
+	)
 
 	tests := []TestCase{
 		{
@@ -165,6 +174,31 @@ func TestValidateEndpoint(t *testing.T) {
 				assert.True(t, ok)
 				assert.Len(t, results, 0)
 				assert.NotNil(t, response["normalized"])
+			},
+		},
+		{
+			description:         "validate: external checks disabled",
+			query:               "QUERY /v1/validate",
+			body:                externalChecksYml,
+			expectedCode:        200,
+			expectedContentType: "application/json; charset=utf-8",
+			validateFunc: func(t *testing.T, response map[string]any) {
+				assert.Equal(t, true, response["valid"])
+				assert.Empty(t, response["results"])
+			},
+		},
+		{
+			description:         "validate: external checks enabled",
+			query:               "QUERY /v1/validate?external-checks=true",
+			body:                externalChecksYml,
+			expectedCode:        200,
+			expectedContentType: "application/json; charset=utf-8",
+			validateFunc: func(t *testing.T, response map[string]any) {
+				assert.Equal(t, false, response["valid"])
+				results, ok := response["results"].([]any)
+				assert.True(t, ok)
+				assert.NotEmpty(t, results)
+				assert.Nil(t, response["normalized"])
 			},
 		},
 		{
