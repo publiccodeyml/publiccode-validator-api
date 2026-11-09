@@ -19,10 +19,10 @@ go run main.go
 ### Validate a publiccode.yml file
 
 ```console
-curl -X QUERY "http://localhost:3000/v1/validate" --data-binary "@./publiccode.yml"
+curl -X POST "http://localhost:3000/v1/validate" --data-binary "@./publiccode.yml"
 ```
 
-or
+The endpoint also accepts the `QUERY` method:
 
 ```console
 curl -X QUERY "http://localhost:3000/v1/validate" \
