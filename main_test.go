@@ -2,10 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"net/http/httptest"
 	"net/url"
 	"os"
 	"strings"
@@ -134,12 +134,10 @@ func TestApi(t *testing.T) {
 func TestValidateEndpoint(t *testing.T) {
 	validYml := loadTestdata(t, "valid.publiccode.yml")
 	invalidYml := loadTestdata(t, "invalid.publiccode.yml")
-	externalChecksServer := httptest.NewServer(http.NotFoundHandler())
-	t.Cleanup(externalChecksServer.Close)
 	externalChecksYml := strings.Replace(
 		validYml,
 		"https://github.com/italia/developers.italia.it.git",
-		externalChecksServer.URL+"/repository.git",
+		"http://127.0.0.1/repository.git",
 		1,
 	)
 
@@ -198,6 +196,7 @@ func TestValidateEndpoint(t *testing.T) {
 				results, ok := response["results"].([]any)
 				assert.True(t, ok)
 				assert.NotEmpty(t, results)
+				assert.Contains(t, fmt.Sprint(results), "non-public")
 				assert.Nil(t, response["normalized"])
 			},
 		},
