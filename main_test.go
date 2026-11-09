@@ -186,6 +186,24 @@ func TestValidateEndpoint(t *testing.T) {
 	runTestCases(t, tests)
 }
 
+func TestValidatePreflight(t *testing.T) {
+	req, err := http.NewRequest(http.MethodOptions, "/v1/validate", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.Header.Set("Origin", "https://validator.example")
+	req.Header.Set("Access-Control-Request-Method", "QUERY")
+
+	res, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer res.Body.Close()
+
+	assert.Equal(t, http.StatusNoContent, res.StatusCode)
+	assert.Contains(t, res.Header.Get("Access-Control-Allow-Methods"), "QUERY")
+}
+
 func TestStatusEndpoints(t *testing.T) {
 	tests := []TestCase{
 		{
