@@ -1,6 +1,6 @@
 # publiccode.yml RESTful validator API
 
-A RESTful API for validating [publiccode.yml](https://github.com/italia/publiccode.yml)
+A RESTful API for validating [publiccode.yml](https://github.com/publiccodeyml/publiccode.yml)
 files, using the [libpubliccode](https://github.com/publiccodeyml/libpubliccode)
 library.
 
@@ -8,7 +8,7 @@ library.
 
 The OpenAPI spec is in [`publiccode-validator-api.oas.yaml`](publiccode-validator-api.oas.yaml).
 
-[Browse the interactive Swagger UI preview](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/italia/publiccode-validator-api/main/publiccode-validator-api.oas.yaml)
+[Browse the interactive Swagger UI preview](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/publiccodeyml/publiccode-validator-api/main/publiccode-validator-api.oas.yaml)
 
 ## Usage
 
