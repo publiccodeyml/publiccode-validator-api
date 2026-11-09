@@ -14,7 +14,7 @@ info:
     name: AGPL-3.0
     identifier: AGPL-3.0-only
   contact:
-    url: "https://github.com/italia/publiccode-validator-api"
+    url: "https://github.com/publiccodeyml/publiccode-validator-api"
 
 servers:
   - url: /v1
