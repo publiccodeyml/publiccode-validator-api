@@ -84,7 +84,7 @@ func runTestCases(t *testing.T, tests []TestCase) {
 			if test.headers != nil {
 				req.Header = test.headers
 			}
-			req.URL.RawQuery = u.Query().Encode()
+			req.URL.RawQuery = u.RawQuery
 
 			res, err := app.Test(req, fiber.TestConfig{Timeout: 0, FailOnTimeout: false})
 			assert.Nil(t, err)
@@ -186,6 +186,17 @@ func TestValidateEndpoint(t *testing.T) {
 			},
 		},
 		{
+			description:         "validate: external checks explicitly disabled",
+			query:               "QUERY /v1/validate?external-checks=false",
+			body:                externalChecksYml,
+			expectedCode:        200,
+			expectedContentType: "application/json; charset=utf-8",
+			validateFunc: func(t *testing.T, response map[string]any) {
+				assert.Equal(t, true, response["valid"])
+				assert.Empty(t, response["results"])
+			},
+		},
+		{
 			description:         "validate: external checks enabled",
 			query:               "QUERY /v1/validate?external-checks=true",
 			body:                externalChecksYml,
@@ -199,6 +210,29 @@ func TestValidateEndpoint(t *testing.T) {
 				assert.Contains(t, fmt.Sprint(results), "non-public")
 				assert.Nil(t, response["normalized"])
 			},
+		},
+		{
+			description:         "validate: repeated external checks use first value",
+			query:               "QUERY /v1/validate?external-checks=true&external-checks=false",
+			body:                externalChecksYml,
+			expectedCode:        200,
+			expectedContentType: "application/json; charset=utf-8",
+			validateFunc: func(t *testing.T, response map[string]any) {
+				assert.Equal(t, false, response["valid"])
+				results, ok := response["results"].([]any)
+				assert.True(t, ok)
+				assert.NotEmpty(t, results)
+				assert.Contains(t, fmt.Sprint(results), "non-public")
+				assert.Nil(t, response["normalized"])
+			},
+		},
+		{
+			description:         "validate: malformed external checks flag",
+			query:               "QUERY /v1/validate?external-checks=invalid",
+			body:                validYml,
+			expectedCode:        400,
+			expectedBody:        `{"title":"invalid external-checks parameter","detail":"external-checks must be true or false","status":400}`,
+			expectedContentType: "application/problem+json",
 		},
 		{
 			description:         "validate: invalid file",
