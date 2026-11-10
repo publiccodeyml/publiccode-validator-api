@@ -29,6 +29,19 @@ curl -X QUERY "http://localhost:3000/v1/validate" \
 --data-binary $'publiccodeYmlVersion: "0.5"\ndevelopmentStatus: stable\n [...]\n'
 ```
 
+### Run external validation checks
+
+External URL reachability checks are disabled by default. Enable them when
+needed with the `external-checks` query parameter:
+
+```console
+curl -X POST "http://localhost:3000/v1/validate?external-checks=true" \
+--data-binary "@./publiccode.yml"
+```
+
+This mode makes network requests for the external checks, so it can take
+longer than the default validation.
+
 ### Example response (valid publiccode.yml)
 
 ```json
