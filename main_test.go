@@ -134,6 +134,7 @@ func TestApi(t *testing.T) {
 func TestValidateEndpoint(t *testing.T) {
 	validYml := loadTestdata(t, "valid.publiccode.yml")
 	invalidYml := loadTestdata(t, "invalid.publiccode.yml")
+	malformedYml := loadTestdata(t, "malformed.publiccode.yml")
 	externalChecksYml := strings.Replace(
 		validYml,
 		"https://github.com/example/project.git",
@@ -238,6 +239,20 @@ func TestValidateEndpoint(t *testing.T) {
 			description:         "validate: invalid file",
 			query:               "QUERY /v1/validate",
 			body:                invalidYml,
+			expectedCode:        200,
+			expectedContentType: "application/json; charset=utf-8",
+			validateFunc: func(t *testing.T, response map[string]any) {
+				assert.Equal(t, false, response["valid"])
+				results, ok := response["results"].([]any)
+				assert.True(t, ok)
+				assert.NotEmpty(t, results)
+				assert.Nil(t, response["normalized"])
+			},
+		},
+		{
+			description:         "validate: malformed YAML",
+			query:               "QUERY /v1/validate",
+			body:                malformedYml,
 			expectedCode:        200,
 			expectedContentType: "application/json; charset=utf-8",
 			validateFunc: func(t *testing.T, response map[string]any) {
