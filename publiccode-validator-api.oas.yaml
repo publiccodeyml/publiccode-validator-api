@@ -96,15 +96,22 @@ paths:
                         description: "missing required field"
                     normalized: null
         "400":
-          description: Bad request (e.g. empty body)
+          description: Bad request (e.g. empty body or invalid external-checks value)
           content:
             application/problem+json:
               schema:
                 $ref: "#/components/schemas/ProblemJSON"
-              example:
-                title: empty body
-                detail: need a body to validate
-                status: 400
+              examples:
+                emptyBody:
+                  value:
+                    title: empty body
+                    detail: need a body to validate
+                    status: 400
+                invalidExternalChecks:
+                  value:
+                    title: invalid external-checks parameter
+                    detail: external-checks must be true or false
+                    status: 400
         "405":
           description: Method not allowed
           headers:

@@ -32,10 +32,14 @@ func (vh *PubliccodeymlValidatorHandler) Query(ctx fiber.Ctx) error {
 	var normalized *string
 
 	valid := true
-	parser := vh.parser
 
-	if checks := fiber.Query[bool](ctx, "external-checks", false); checks {
-		parser = vh.parserExternalChecks
+	parser, invalidExternalChecks := vh.parserForExternalChecks(ctx)
+	if invalidExternalChecks {
+		return common.Error(
+			fiber.StatusBadRequest,
+			"invalid external-checks parameter",
+			"external-checks must be true or false",
+		)
 	}
 
 	if len(ctx.Body()) == 0 {
@@ -71,4 +75,20 @@ func (vh *PubliccodeymlValidatorHandler) Query(ctx fiber.Ctx) error {
 
 	//nolint:wrapcheck
 	return ctx.JSON(fiber.Map{"valid": valid, "results": results, "normalized": normalized})
+}
+
+func (vh *PubliccodeymlValidatorHandler) parserForExternalChecks(ctx fiber.Ctx) (*publiccodeParser.Parser, bool) {
+	args := ctx.Request().URI().QueryArgs()
+	if !args.Has("external-checks") {
+		return vh.parser, false
+	}
+
+	switch string(args.Peek("external-checks")) {
+	case "true":
+		return vh.parserExternalChecks, false
+	case "false":
+		return vh.parser, false
+	default:
+		return nil, true
+	}
 }
