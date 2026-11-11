@@ -40,6 +40,5 @@ func CustomErrorHandler(ctx fiber.Ctx, err error) error {
 
 	ctx.Status(problemJSON.Status)
 
-	//nolint:wrapcheck
 	return ctx.JSON(problemJSON, "application/problem+json")
 }

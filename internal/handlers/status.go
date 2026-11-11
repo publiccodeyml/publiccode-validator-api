@@ -17,6 +17,5 @@ func NewStatus(version string, commit string) *Status {
 func (s *Status) GetStatus(ctx fiber.Ctx) error {
 	ctx.Append("Cache-Control", "no-cache")
 
-	//nolint:wrapcheck
 	return ctx.Status(fiber.StatusOK).JSON(s)
 }
