@@ -73,7 +73,6 @@ func (vh *PubliccodeymlValidatorHandler) Query(ctx fiber.Ctx) error {
 		}
 	}
 
-	//nolint:wrapcheck
 	return ctx.JSON(fiber.Map{"valid": valid, "results": results, "normalized": normalized})
 }
 
