@@ -36,8 +36,6 @@ type TestCase struct {
 }
 
 func init() {
-	_ = os.Setenv("ENVIRONMENT", "test")
-
 	// Setup the app as it is done in the main function
 	app = Setup()
 }

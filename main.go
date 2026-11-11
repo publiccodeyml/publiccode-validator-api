@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 
-	"github.com/caarlos0/env/v6"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
 	"github.com/gofiber/fiber/v3/middleware/recover"
@@ -25,10 +24,6 @@ func main() {
 }
 
 func Setup() *fiber.App {
-	if err := env.Parse(&common.EnvironmentConfig); err != nil {
-		panic(err)
-	}
-
 	methods := append(fiber.DefaultMethods, "QUERY") //nolint:gocritic // We want a new slice here
 
 	app := fiber.New(fiber.Config{
