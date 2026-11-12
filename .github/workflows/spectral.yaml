@@ -1,10 +1,14 @@
 on:
   push:
     branches: [main]
-    paths: publiccode-validator-api.oas.yaml
+    paths:
+      - publiccode-validator-api.oas.yaml
+      - .github/workflows/spectral.yaml
   pull_request:
     branches: [main]
-    paths: publiccode-validator-api.oas.yaml
+    paths:
+      - publiccode-validator-api.oas.yaml
+      - .github/workflows/spectral.yaml
 
 permissions: {}
 
