@@ -41,20 +41,24 @@ func listen(app *fiber.App, address string) error {
 }
 
 func Setup() *fiber.App {
-	methods := append(fiber.DefaultMethods, "QUERY") //nolint:gocritic // We want a new slice here
-
-	app := fiber.New(fiber.Config{
-		ErrorHandler: common.CustomErrorHandler,
+	return setup(fiber.Config{
 		// Allow 30 seconds to upload the default maximum body of 4 MiB.
 		ReadTimeout: 30 * time.Second,
 		// This bounds response writes after the handler, including external checks, returns.
 		WriteTimeout: 30 * time.Second,
 		IdleTimeout:  60 * time.Second,
-		// Fiber doesn't set DisallowUnknownFields by default
-		// (https://github.com/gofiber/fiber/issues/2601)
-		JSONDecoder:    jsondecoder.UnmarshalDisallowUnknownFields,
-		RequestMethods: methods,
 	})
+}
+
+func setup(config fiber.Config) *fiber.App {
+	config.ErrorHandler = common.CustomErrorHandler
+	// Fiber doesn't set DisallowUnknownFields by default
+	// (https://github.com/gofiber/fiber/issues/2601)
+	config.JSONDecoder = jsondecoder.UnmarshalDisallowUnknownFields
+
+	config.RequestMethods = append(fiber.DefaultMethods, "QUERY") //nolint:gocritic // We want a new slice here
+
+	app := fiber.New(config)
 
 	// Automatically recover panics in handlers
 	app.Use(recover.New())
