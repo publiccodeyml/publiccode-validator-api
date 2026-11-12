@@ -2,6 +2,7 @@ package common
 
 import (
 	"errors"
+	"log"
 
 	"github.com/gofiber/fiber/v3"
 )
@@ -34,7 +35,12 @@ func CustomErrorHandler(ctx fiber.Ctx, err error) error {
 		case ProblemJSONError:
 			problemJSON = &e
 		default:
-			problemJSON = &ProblemJSONError{Status: fiber.StatusNotFound, Title: fiber.ErrNotFound.Message, Detail: e.Error()}
+			log.Printf("Unhandled request error: %v", err)
+
+			problemJSON = &ProblemJSONError{
+				Status: fiber.StatusInternalServerError,
+				Title:  fiber.ErrInternalServerError.Message,
+			}
 		}
 	}
 
