@@ -16,6 +16,11 @@ The OpenAPI spec is in [`publiccode-validator-api.oas.yaml`](publiccode-validato
 go run main.go
 ```
 
+Requests must be fully received within 30 seconds (up to the default 4 MiB
+body limit). Response writes have a 30 second timeout after validation
+finishes, including any external checks. Idle keepalive connections close
+after 60 seconds. These connection timeouts do not limit validation execution.
+
 ### Validate a publiccode.yml file
 
 ```console
