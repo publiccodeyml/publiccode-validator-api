@@ -136,7 +136,7 @@ func TestValidateEndpoint(t *testing.T) {
 	invalidYml := loadTestdata(t, "invalid.publiccode.yml")
 	externalChecksYml := strings.Replace(
 		validYml,
-		"https://github.com/italia/developers.italia.it.git",
+		"https://github.com/example/project.git",
 		"http://127.0.0.1/repository.git",
 		1,
 	)

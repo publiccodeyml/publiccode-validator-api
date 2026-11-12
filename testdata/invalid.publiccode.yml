@@ -1,7 +1,7 @@
 publiccodeYmlVersion: "0"
 
 name: Medusa
-url: "https://github.com/italia/developers.italia.it.git"
+url: "https://github.com/example/project.git"
 
 platforms:
   - web
