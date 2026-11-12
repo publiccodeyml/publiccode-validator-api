@@ -30,8 +30,15 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
-dockers:
+dockers_v2:
   - dockerfile: Dockerfile.goreleaser
-    image_templates:
-      - "ghcr.io/publiccodeyml/publiccode-validator-api:{{ .Tag }}"
-      - "ghcr.io/publiccodeyml/publiccode-validator-api:latest"
+    images:
+      - "ghcr.io/publiccodeyml/publiccode-validator-api"
+    tags:
+      - "{{ .Tag }}"
+      - "latest"
+    platforms:
+      - linux/amd64
+    # The release job uses the default docker buildx driver, which cannot
+    # push attestations.
+    sbom: false

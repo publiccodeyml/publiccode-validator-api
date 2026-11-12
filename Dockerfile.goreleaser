@@ -7,7 +7,9 @@ FROM alpine:3@sha256:be2656061b536c1883c4034790e21d0a09c5aaaf51968b89368a3c0371e
 
 RUN addgroup -S validator && adduser -S -G validator validator
 
-COPY publiccode-validator-api /usr/local/bin/publiccode-validator-api
+# GoReleaser places each binary under a directory named after its platform.
+ARG TARGETPLATFORM
+COPY $TARGETPLATFORM/publiccode-validator-api /usr/local/bin/publiccode-validator-api
 
 USER validator
 ENTRYPOINT ["/usr/local/bin/publiccode-validator-api"]
