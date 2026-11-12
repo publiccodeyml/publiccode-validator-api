@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/cors"
@@ -28,6 +29,11 @@ func Setup() *fiber.App {
 
 	app := fiber.New(fiber.Config{
 		ErrorHandler: common.CustomErrorHandler,
+		// Allow 30 seconds to upload the default maximum body of 4 MiB.
+		ReadTimeout: 30 * time.Second,
+		// This bounds response writes after the handler, including external checks, returns.
+		WriteTimeout: 30 * time.Second,
+		IdleTimeout:  60 * time.Second,
 		// Fiber doesn't set DisallowUnknownFields by default
 		// (https://github.com/gofiber/fiber/issues/2601)
 		JSONDecoder:    jsondecoder.UnmarshalDisallowUnknownFields,
