@@ -44,32 +44,40 @@ longer than the default validation.
 
 ### Example response (valid publiccode.yml)
 
+For [`testdata/valid.publiccode.yml`](testdata/valid.publiccode.yml):
+
 ```json
 {
   "valid": true,
+  "normalized": "publiccodeYmlVersion: \"0\"\nname: Medusa\nurl: https://github.com/example/project.git\nreleaseDate: null\nplatforms:\n- web\ncategories:\n- cloud-management\ndevelopmentStatus: development\nsoftwareType: standalone/other\ndescription:\n  en-GB:\n    localisedName: Medusa\n    genericName: \"\"\n    shortDescription: |\n      A rather short description which is probably useless\n    longDescription: |\n      Very long description of this software, also split on multiple rows. You should note what the software is and why one should need it. This is 158 characters. Very long description of this software, also split on multiple rows. You should note what the software is and why one should need it. This is 316 characters. Very long description of this software, also split on multiple rows. You should note what the software is and why one should need it. This is 474 characters. Very long description of this software, also split on multiple rows. You should note what the software is and why one should need it. This is 632 characters.\n    features:\n    - Just one feature\nlegal:\n  license: AGPL-3.0-or-later\nmaintenance:\n  type: community\n  contacts:\n  - name: Francesco Rossi\nlocalisation:\n  localisationReady: true\n  availableLanguages:\n  - en\n",
   "results": []
 }
 ```
 
 ### Example response (with errors / warnings)
 
+For the same file with `publiccodeYmlVersion: "0.2"` and `legal.license: invalid`:
+
 ```json
 {
   "valid": false,
+  "normalized": null,
   "results": [
     {
-      "type": "error",
-      "key": "legal.license",
-      "description": "license must be a valid license (see https://spdx.org/licenses)",
-      "line": 12,
-      "column": 5
+      "file": "",
+      "key": "publiccodeYmlVersion",
+      "description": "v0.2 is not the latest version, use '0'. Parsing this file as v0.8.",
+      "line": 1,
+      "column": 1,
+      "type": "warning"
     },
     {
-      "type": "warning",
-      "key": "publiccodeYmlVersion",
-      "description": "v0.2 is not the latest version, use '0'. Parsing this file as v0.5",
-      "line": 1,
-      "column": 1
+      "file": "",
+      "key": "legal.license",
+      "description": "license must be a valid license (see https://spdx.org/licenses)",
+      "line": 39,
+      "column": 3,
+      "type": "error"
     }
   ]
 }
