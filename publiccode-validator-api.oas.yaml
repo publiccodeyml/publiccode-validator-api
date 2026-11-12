@@ -41,6 +41,16 @@ paths:
                 v: "1.0.0"
                 commit: "abc1234"
 
+        "500":
+          description: Unexpected server error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemJSON"
+              example:
+                title: Internal Server Error
+                status: 500
+
   /validate:
     post:
       operationId: validatePubliccode
@@ -136,6 +146,16 @@ paths:
               example:
                 title: Not Found
                 status: 404
+
+        "500":
+          description: Unexpected server error
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemJSON"
+              example:
+                title: Internal Server Error
+                status: 500
 
 components:
   schemas:

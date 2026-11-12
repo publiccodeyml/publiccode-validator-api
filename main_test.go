@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"os"
 	"strings"
@@ -127,6 +130,38 @@ func TestApi(t *testing.T) {
 	}
 
 	runTestCases(t, tests)
+}
+
+func TestUnhandledErrors(t *testing.T) {
+	for _, panics := range []bool{false, true} {
+		t.Run(fmt.Sprintf("panic=%t", panics), func(t *testing.T) {
+			var logs bytes.Buffer
+			previousOutput := log.Writer()
+			log.SetOutput(&logs)
+			t.Cleanup(func() { log.SetOutput(previousOutput) })
+
+			app := Setup()
+			app.Get("/error", func(ctx fiber.Ctx) error {
+				if panics {
+					panic("secret internal state")
+				}
+				return errors.New("secret internal state")
+			})
+
+			res, err := app.Test(httptest.NewRequest(http.MethodGet, "/error", nil))
+			if !assert.NoError(t, err) {
+				return
+			}
+			defer res.Body.Close()
+
+			body, err := io.ReadAll(res.Body)
+			assert.NoError(t, err)
+			assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
+			assert.Equal(t, "application/problem+json", res.Header.Get("Content-Type"))
+			assert.JSONEq(t, `{"title":"Internal Server Error","status":500}`, string(body))
+			assert.Contains(t, logs.String(), "secret internal state")
+		})
+	}
 }
 
 func TestValidateEndpoint(t *testing.T) {
