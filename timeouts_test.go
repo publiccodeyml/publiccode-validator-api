@@ -11,13 +11,18 @@ import (
 )
 
 func TestStalledRequests(t *testing.T) {
-	// Setup writes package globals in libpubliccode, so the subtests share
+	// Setup() writes package globals in libpubliccode, so the subtests share
 	// one server instead of each building their own in parallel.
 	server := Setup()
 	config := server.Config()
 	require.Equal(t, 30*time.Second, config.ReadTimeout)
 	require.Equal(t, 30*time.Second, config.WriteTimeout)
 	require.Equal(t, 60*time.Second, config.IdleTimeout)
+
+	config.ReadTimeout = 200 * time.Millisecond
+	config.WriteTimeout = 200 * time.Millisecond
+	config.IdleTimeout = 200 * time.Millisecond
+	server = setup(config)
 
 	listener, err := net.Listen("tcp", "127.0.0.1:0")
 	require.NoError(t, err)
