@@ -1,7 +1,12 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/gofiber/fiber/v3"
@@ -19,9 +24,20 @@ var (
 
 func main() {
 	app := Setup()
-	if err := app.Listen(":3000"); err != nil {
+	if err := listen(app, ":3000"); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func listen(app *fiber.App, address string) error {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	if err := app.Listen(address, fiber.ListenConfig{GracefulContext: ctx}); err != nil {
+		return fmt.Errorf("listen: %w", err)
+	}
+
+	return nil
 }
 
 func Setup() *fiber.App {
