@@ -154,6 +154,16 @@ paths:
                 title: Not Found
                 status: 404
 
+        "413":
+          description: Request body exceeds 4 MiB (4,194,304 bytes)
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemJSON"
+              example:
+                title: Request Entity Too Large
+                status: 413
+
         "415":
           description: >
             Unsupported Content-Encoding of the request body, or more
