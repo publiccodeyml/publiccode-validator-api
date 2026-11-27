@@ -2,6 +2,8 @@ module github.com/italia/publiccode-validator-api
 
 go 1.26.0
 
+toolchain go1.26.11
+
 require (
 	github.com/gofiber/fiber/v3 v3.7.0
 	github.com/publiccodeyml/libpubliccode/v5 v5.5.1
