@@ -223,6 +223,28 @@ func TestValidateEndpoint(t *testing.T) {
 			},
 		},
 		{
+			description:         "validate with POST: unbalanced license expression",
+			query:               "POST /v1/validate",
+			body:                "publiccodeYmlVersion: \"0\"\nlegal:\n  license: (\n",
+			expectedCode:        200,
+			expectedContentType: "application/json; charset=utf-8",
+			validateFunc: func(t *testing.T, response map[string]any) {
+				assert.Equal(t, false, response["valid"])
+				assert.Contains(t, fmt.Sprint(response["results"]), "legal.license")
+			},
+		},
+		{
+			description:         "validate with POST: unterminated license expression",
+			query:               "POST /v1/validate",
+			body:                "publiccodeYmlVersion: \"0\"\nlegal:\n  license: \"MIT AND (\"\n",
+			expectedCode:        200,
+			expectedContentType: "application/json; charset=utf-8",
+			validateFunc: func(t *testing.T, response map[string]any) {
+				assert.Equal(t, false, response["valid"])
+				assert.Contains(t, fmt.Sprint(response["results"]), "legal.license")
+			},
+		},
+		{
 			description:         "validate: empty body",
 			query:               "QUERY /v1/validate",
 			body:                "",
