@@ -42,13 +42,14 @@ func (vh *PubliccodeymlValidatorHandler) Query(ctx fiber.Ctx) error {
 		)
 	}
 
-	if len(ctx.Body()) == 0 {
-		return common.Error(fiber.StatusBadRequest, "empty body", "need a body to validate")
+	body, err := validationBody(ctx)
+	if err != nil {
+		return err
 	}
 
 	results := make(publiccodeParser.ValidationResults, 0)
 
-	reader := bytes.NewReader(ctx.Body())
+	reader := bytes.NewReader(body)
 
 	parsed, err := parser.ParseStream(reader)
 	if err != nil {

@@ -106,7 +106,9 @@ paths:
                         description: "missing required field"
                     normalized: null
         "400":
-          description: Bad request (e.g. empty body or invalid external-checks value)
+          description: >
+            Bad request (e.g. empty body, invalid external-checks value
+            or a body that cannot be decoded with its Content-Encoding)
           content:
             application/problem+json:
               schema:
@@ -121,6 +123,11 @@ paths:
                   value:
                     title: invalid external-checks parameter
                     detail: external-checks must be true or false
+                    status: 400
+                invalidCompressedBody:
+                  value:
+                    title: invalid compressed body
+                    detail: cannot decode request body
                     status: 400
         "405":
           description: Method not allowed
@@ -146,6 +153,28 @@ paths:
               example:
                 title: Not Found
                 status: 404
+
+        "415":
+          description: >
+            Unsupported Content-Encoding of the request body, or more
+            than five codings applied to it
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemJSON"
+              example:
+                title: Unsupported Media Type
+                status: 415
+
+        "501":
+          description: Request body uses the compress Content-Encoding
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemJSON"
+              example:
+                title: Not Implemented
+                status: 501
 
         "500":
           description: Unexpected server error
